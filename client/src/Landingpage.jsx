@@ -12,7 +12,7 @@ function LandingPage(){
                     <div className='w-90'>
                     <div className='instaImage pt-28'>
                         <img  src={instaLogo} />
-                    </div>
+                    </div> 
                     <div className='grid grid-cols-1 items-center'>
                         <div className='flex flex-col gap-2'>
                             <input type='text' className='block h-10 w-full mt-10 appearance-none rounded-lg bg-gray-50 px-3 sm:text-sm outline -outline-offset-1 outline-gray-950/15 focus:outline-gray-950 data-error:outline-rose-500' placeholder='Phone number, username, or email' />
