@@ -1,5 +1,9 @@
+import LandingPage from './Landingpage';
+
 function App() {
-  return <div className="bg-red-500 h-screen">yooo</div>;
+  return <>
+   <LandingPage/>
+    </> 
 }
 
 export default App;
