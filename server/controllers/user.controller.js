@@ -3,6 +3,8 @@ import { User } from "../models/user.model.js";
 import { loginValidation, signUpValidation } from "../utils/validator.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { verifyToken } from "../middleware/auth.js";
+import { BlacklistedToken } from "../models/blacklistedToken.model.js";
 
 export const signUp = [
   signUpValidation,
@@ -132,11 +134,42 @@ export const login = [
 ];
 
 // Logout
-export const logout = async (req, res) => {
+export const logout = [
+  verifyToken,
+  async (req, res) => {
+    try {
+      const token = req.headers["authorization"].split(" ")[1];
+      await BlacklistedToken.create({
+        token,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+      });
+      return res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+      console.error("Error while logging out:", error.message);
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", error: error.message });
+    }
+  },
+];
+
+export const getProfile = async (req, res) => {
   try {
-    res.status(200).json({ message: "Logout successful" });
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not Found" });
+    }
+    res.status(200).json({
+      message: "Profile fetched successfully",
+      user: {
+        id: user._id,
+        userName: user.userName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        fullName: user.fullName,
+      },
+    });
   } catch (error) {
-    console.error("Error while logging out:", error.message);
     res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
