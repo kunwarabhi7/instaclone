@@ -35,21 +35,20 @@ export const signUpValidation = [
     .withMessage("Full name can only contain letters and spaces"),
 ];
 
-export const loginValidator = [
+export const loginValidation = [
   body("identifier")
     .notEmpty()
-    .withMessage("Email ,UserName or PhoneNumber is required")
+    .withMessage("Username, email, or phone number is required")
     .custom((value) => {
       const isEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
         value
       );
       const isPhone = /^\+91[6-9]\d{9}$/.test(value);
       const isUsername = /^[a-zA-Z0-9_]+$/.test(value);
-
       if (!isEmail && !isPhone && !isUsername) {
         throw new Error("Invalid username, email, or phone number format");
-        return true;
       }
+      return true;
     }),
   body("password").notEmpty().withMessage("Password is required"),
 ];
