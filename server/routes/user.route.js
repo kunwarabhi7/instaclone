@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { login, logout, signUp } from "../controllers/user.controller.js";
+import {
+  getProfile,
+  login,
+  logout,
+  signUp,
+} from "../controllers/user.controller.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = Router();
 router.get("/", (req, res) => {
@@ -9,5 +15,6 @@ router.get("/", (req, res) => {
 router.post("/signup", signUp);
 router.post("/login", login);
 router.post("/logout", logout);
+router.get("/profile", verifyToken, getProfile);
 
 export { router as userRouter };
