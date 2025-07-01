@@ -59,6 +59,32 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    bio: {
+      type: String,
+      default: "",
+      maxlength: [150, "Bio cannot exceed 150 characters"],
+      trim: true,
+    },
+    profilePic: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    followersCount: {
+      type: Number,
+      default: 0,
+      min: [0, "Followers count cannot be negative"],
+    },
+    followingCount: {
+      type: Number,
+      default: 0,
+      min: [0, "Following count cannot be negative"],
+    },
+    postsCount: {
+      type: Number,
+      default: 0,
+      min: [0, "Posts count cannot be negative"],
+    },
   },
   { timestamps: true }
 );
