@@ -52,3 +52,23 @@ export const loginValidation = [
     }),
   body("password").notEmpty().withMessage("Password is required"),
 ];
+
+export const profileValidation = [
+  body("bio")
+    .optional()
+    .isLength({ max: 150 })
+    .withMessage("Bio cannot exceed 150 characters")
+    .trim(),
+  body("profilePic")
+    .optional()
+    .isURL()
+    .withMessage("Invalid URL format for profile picture")
+    .trim(),
+  body("fullName")
+    .optional()
+    .isLength({ min: 3, max: 50 })
+    .withMessage("Full name must be between 3 and 50 characters")
+    .matches(/^[a-zA-Z\s]+$/)
+    .withMessage("Full name can only contain letters and spaces")
+    .trim(),
+];
