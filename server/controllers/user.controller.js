@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { verifyToken } from "../middleware/auth.js";
 import { BlacklistedToken } from "../models/blacklistedToken.model.js";
+import { upload } from "../utils/cloudinary.js";
 
 export const signUp = [
   signUpValidation,
@@ -206,33 +207,39 @@ export const getProfile = async (req, res) => {
 
 export const updateProfile = [
   verifyToken,
+  upload.single("profilePic"),
   profileValidation,
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Validation failed", errors: errors.array() });
     }
 
-    const { bio, profilePic, fullName } = req.body;
+    const { bio, fullName } = req.body;
     try {
       // update User
       const updateData = {};
       if (bio !== undefined) updateData.bio = bio;
-      if (profilePic !== undefined) updateData.profilePic = profilePic;
       if (fullName !== undefined) updateData.fullName = fullName;
+      if (req.file) updateData.profilePic = req.file.path;
+
+      if (Object.keys(updateData).length === 0) {
+        return res
+          .status(400)
+          .json({ message: "No fields provided to update" });
+      }
 
       const user = await User.findByIdAndUpdate(
         req.user.id,
-        { $set: updateData, updatedAt: new Date() },
+        { $set: { ...updateData, updatedAt: new Date() } },
         { new: true, runValidators: true, select: "-password" }
       );
       if (!user) {
-        return res.status(400).json({ message: "User not Found" });
+        return res.status(404).json({ message: "User not Found" });
       }
 
-      await user.save();
       return res.status(200).json({
         message: "User Updated Successfully",
         user: {
