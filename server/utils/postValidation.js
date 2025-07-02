@@ -18,3 +18,11 @@ export const commentValidation = [
     .isLength({ max: 1000 })
     .withMessage("Comment cannot exceed 1000 characters"),
 ];
+
+export const updatePostValidation = [
+  body("caption")
+    .optional()
+    .isLength({ max: 2200 })
+    .withMessage("Caption cannot exceed 2200 characters")
+    .trim(),
+];

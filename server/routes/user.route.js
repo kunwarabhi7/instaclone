@@ -17,6 +17,6 @@ router.post("/signup", signUp);
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/profile", verifyToken, getProfile);
-router.put("/profile", verifyToken, updateProfile);
+router.patch("/profile", verifyToken, updateProfile);
 
 export { router as userRouter };
