@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import {
   createPost,
+  deletePost,
   getPost,
   updatePost,
 } from "../controllers/post.controller.js";
@@ -14,5 +15,6 @@ route.get("/", (req, res) => {
 route.post("/create", createPost);
 route.patch("/:postId", updatePost);
 route.get("/:postId", getPost);
+route.delete("/:postId", deletePost);
 
 export { route as PostRouter };
