@@ -149,15 +149,53 @@ export const updatePost = [
 export const getPost = async (req, res) => {
   const postId = req.params.postId;
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).lean();
     if (!post) {
       return res.status(404).json({ message: "Post not Found" });
     }
-    return res.status(200).json({ message: "Post Fetched Successfully", post });
+    return res.status(200).json({
+      message: "Post Fetched Successfully",
+      data: {
+        id: post._id,
+        userId: post.userId,
+        image: post.image,
+        caption: post.caption,
+        likesCount: post.likesCount || 0,
+        commentsCount: post.commentsCount || 0,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+      },
+    });
   } catch (error) {
-    console.error("Error updating post:", error.stack);
+    console.error("Error fetching post:", error.stack);
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
 };
+
+export const deletePost = [
+  verifyToken,
+  async (req, res) => {
+    const postId = req.params.postId;
+    try {
+      const post = await Post.findByIdAndDelete(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post Not Found" });
+      }
+      await User.findByIdAndUpdate(
+        post.userId,
+        { $inc: { postsCount: -1 } },
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json({ message: "Post deleted Successfully", postId });
+    } catch (error) {
+      console.error("Error deleting post:", error.stack); // Fixed error message
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  },
+];
