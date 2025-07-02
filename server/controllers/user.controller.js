@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { verifyToken } from "../middleware/auth.js";
 import { BlacklistedToken } from "../models/blacklistedToken.model.js";
-import { upload } from "../utils/cloudinary.js";
+import { profileUpload } from "../utils/cloudinary.js";
 
 export const signUp = [
   signUpValidation,
@@ -207,7 +207,7 @@ export const getProfile = async (req, res) => {
 
 export const updateProfile = [
   verifyToken,
-  upload.single("profilePic"),
+  profileUpload.single("profilePic"),
   profileValidation,
   async (req, res) => {
     const errors = validationResult(req);

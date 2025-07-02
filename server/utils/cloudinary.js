@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 //multer
-const storage = new CloudinaryStorage({
+const profileStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "insta_clone_profile_pic",
@@ -17,6 +17,39 @@ const storage = new CloudinaryStorage({
     transformation: [{ width: 150, height: 150, crop: "fill" }],
   },
 });
-const upload = multer({ storage });
 
-export { cloudinary, upload };
+const postStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "insta_clone_post",
+
+    allowed_formats: ["jpg", "png", "jpeg"],
+    transformation: [{ width: 1080, height: 1080, crop: "limit" }],
+  },
+});
+
+const profileUpload = multer({
+  storage: profileStorage,
+  limits: { fieldSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image file are allowed"), false);
+    }
+  },
+});
+
+const postUpload = multer({
+  storage: postStorage,
+  limits: { fieldSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image file are allowed "), false);
+    }
+  },
+});
+
+export { cloudinary, profileUpload, postUpload };
