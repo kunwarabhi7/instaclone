@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import {
+  addComment,
   createPost,
   deletePost,
   getPost,
@@ -18,5 +19,6 @@ route.patch("/:postId", updatePost);
 route.get("/:postId", getPost);
 route.delete("/:postId", deletePost);
 route.post("/:postId/like", likePost);
+route.post("/:postId/comments", addComment);
 
 export { route as PostRouter };

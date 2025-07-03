@@ -8,6 +8,7 @@ import {
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
 import { Like } from "../models/Like.model.js";
+import { Comment } from "../models/comment.model.js";
 
 export const createPost = [
   verifyToken,
@@ -233,6 +234,34 @@ export const likePost = [
       }
     } catch (error) {
       console.error("Error toggling like:", error.stack);
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  },
+];
+
+export const addComment = [
+  verifyToken,
+  async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.user.id;
+    const { comment } = req.body;
+
+    try {
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(400).json({ message: "Post not Found" });
+      }
+      const newComment = await Comment.create({ postId, userId, comment });
+      await newComment.save();
+      post.commentsCount += 1;
+      await post.save();
+      return res
+        .status(201)
+        .json({ message: "Comment added successfully", comment: newComment });
+    } catch (error) {
+      console.error("Error adding comment:", error.stack);
       res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
