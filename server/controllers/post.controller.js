@@ -7,6 +7,7 @@ import {
 } from "../utils/postValidation.js";
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
+import { Like } from "../models/Like.model.js";
 
 export const createPost = [
   verifyToken,
@@ -193,6 +194,45 @@ export const deletePost = [
         .json({ message: "Post deleted Successfully", postId });
     } catch (error) {
       console.error("Error deleting post:", error.stack); // Fixed error message
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  },
+];
+
+export const likePost = [
+  verifyToken,
+  async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.user.id;
+    try {
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      const existingLike = await Like.findOne({ postId, userId });
+      //unLike
+      if (existingLike) {
+        await Like.findOneAndDelete(existingLike._id);
+        post.likesCount -= 1;
+        await post.save();
+        return res.status(200).json({
+          message: "Post unliked successfully",
+          likesCount: post.likesCount,
+        });
+      } else {
+        // Like
+        await Like.create({ postId, userId });
+        post.likesCount += 1;
+        await post.save();
+        return res.status(201).json({
+          message: "Post liked successfully",
+          likesCount: post.likesCount,
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error.stack);
       res
         .status(500)
         .json({ message: "Internal server error", error: error.message });

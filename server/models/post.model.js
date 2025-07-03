@@ -21,7 +21,7 @@ const postSchema = new mongoose.Schema(
     likesCount: {
       type: Number,
       default: 0,
-      min: [0, "likes can't be negitive"],
+      min: [0, "Likes can't be negitive"],
     },
     commentsCount: {
       type: Number,
@@ -32,6 +32,8 @@ const postSchema = new mongoose.Schema(
 
   { timestamps: true }
 );
+
+postSchema.index({ userId: 1 });
 
 const Post = mongoose.model("Post", postSchema);
 export { Post };

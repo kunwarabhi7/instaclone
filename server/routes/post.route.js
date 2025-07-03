@@ -3,6 +3,7 @@ import {
   createPost,
   deletePost,
   getPost,
+  likePost,
   updatePost,
 } from "../controllers/post.controller.js";
 
@@ -16,5 +17,6 @@ route.post("/create", createPost);
 route.patch("/:postId", updatePost);
 route.get("/:postId", getPost);
 route.delete("/:postId", deletePost);
+route.post("/:postId/like", likePost);
 
 export { route as PostRouter };
