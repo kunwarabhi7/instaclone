@@ -268,3 +268,42 @@ export const addComment = [
     }
   },
 ];
+
+export const deleteComment = [
+  verifyToken,
+  async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.user.id;
+    const commentId = req.params.commentId;
+
+    try {
+      const comment = await Comment.findById(commentId);
+
+      if (!comment) {
+        return res.status(404).json({ message: "Comment Not Found" });
+      }
+      if (comment.userId.toString() !== userId) {
+        return res
+          .status(403)
+          .json({ message: "you are not authorised to delete the Comment" });
+      }
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not Found" });
+      }
+      //delete Comment and Update Post
+      await Comment.findByIdAndDelete(commentId);
+      post.commentsCount = Math.max(0, post.commentsCount - 1);
+      await post.save();
+      return res.status(200).json({
+        message: "Comment Delete Successfully",
+        commentsCount: post.commentsCount,
+      });
+    } catch (error) {
+      console.error("Error deleting comment:", error.stack);
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  },
+];
