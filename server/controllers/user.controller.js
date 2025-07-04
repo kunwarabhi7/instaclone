@@ -263,3 +263,68 @@ export const updateProfile = [
     }
   },
 ];
+
+export const toggleFollow = [
+  verifyToken,
+  async (req, res) => {
+    const userId = req.user.id; // Current user (from JWT middleware)
+    const targetId = req.params.userId; // User to follow/unfollow
+    console.log("userId:", userId, "targetId:", targetId); // Debug log
+
+    try {
+      // Check if user and target user are the same
+      if (userId === targetId) {
+        return res
+          .status(400)
+          .json({ message: "You cannot follow/unfollow yourself" });
+      }
+
+      // Check if target user exists
+      const targetUser = await User.findById(targetId); // Fixed: Check targetId directly
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check if already following
+      const isFollowing = await User.findOne({
+        _id: userId,
+        following: targetId,
+      });
+
+      if (isFollowing) {
+        // Unfollow
+        await User.findByIdAndUpdate(userId, {
+          $pull: { following: targetId },
+          $inc: { followingCount: -1 }, // Decrease current user's following count
+        });
+        await User.findByIdAndUpdate(targetId, {
+          $pull: { followers: userId },
+          $inc: { followersCount: -1 }, // Decrease target user's followers count
+        });
+        return res.status(200).json({
+          message: `You have unfollowed ${targetUser.userName}`,
+          action: "unfollowed", // Fixed typo
+        });
+      } else {
+        // Follow
+        await User.findByIdAndUpdate(userId, {
+          $push: { following: targetId },
+          $inc: { followingCount: 1 }, // Increase current user's following count
+        });
+        await User.findByIdAndUpdate(targetId, {
+          $push: { followers: userId }, // Fixed: Use $push, not $inc
+          $inc: { followersCount: 1 }, // Increase target user's followers count
+        });
+        return res.status(200).json({
+          message: `You are now following ${targetUser.userName}`,
+          action: "followed",
+        });
+      }
+    } catch (error) {
+      console.error("Error in toggleFollow:", error.stack);
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  },
+];
