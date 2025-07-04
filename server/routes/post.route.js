@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 import {
   addComment,
   createPost,
@@ -9,18 +9,18 @@ import {
   updatePost,
 } from "../controllers/post.controller.js";
 
-const route = express.Router();
+const router = express.Router();
 
-route.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.status(200).json({ message: "Route working fine" });
 });
 
-route.post("/create", createPost);
-route.patch("/:postId", updatePost);
-route.get("/:postId", getPost);
-route.delete("/:postId", deletePost);
-route.post("/:postId/like", likePost);
-route.post("/:postId/comments", addComment);
-route.delete("/:postId/comments/:commentId", deleteComment);
+router.post("/create", createPost);
+router.patch("/:postId", updatePost);
+router.get("/:postId", getPost);
+router.delete("/:postId", deletePost);
+router.post("/:postId/like", likePost);
+router.post("/:postId/comments", addComment);
+router.delete("/:postId/comments/:commentId", deleteComment);
 
-export { route as PostRouter };
+export { router as PostRouter };
