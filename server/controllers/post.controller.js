@@ -307,3 +307,16 @@ export const deleteComment = [
     }
   },
 ];
+
+export const getFeed = [
+  verifyToken,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const user = User.findById(userId).populate("following");
+      if (!user) {
+        return res.status(404).json({ message: "User not Found" });
+      }
+    } catch (error) {}
+  },
+];

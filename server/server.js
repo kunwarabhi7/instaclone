@@ -3,6 +3,7 @@ import { configDotenv } from "dotenv";
 import { connectToDB } from "./utils/connectToDB.js";
 import { userRouter } from "./routes/user.route.js";
 import { PostRouter } from "./routes/post.route.js";
+import {startCronJob} from './utils/cron.js'
 
 configDotenv();
 
@@ -17,6 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Route is running" });
 });
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
 app.use("/api/user", userRouter);
 app.use("/api/post", PostRouter);
 
@@ -27,6 +32,9 @@ app.use((err, req, res, next) => {
     .status(500)
     .json({ message: "Something went wrong!", error: err.message });
 });
+
+// Start cron job
+startCronJob()
 
 // Start Server
 const startServer = async () => {
