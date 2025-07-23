@@ -1,45 +1,122 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import InstaMainImg from './assets/images/instagram-web-lox-image.png';
 import instaLogo from './assets/images/insta.jpg';
 
-function SignUp(){
-    return(
-        <>
-            <div className="container mx-auto px-4">
-            <div className="flex flex-row w-full">
-                <div className="w-1/2">
-                    <img className='m-20 size-9/12' src={InstaMainImg} />
-                    
-                </div>
-                <div className="w-1/2 pl-20">
-                    <div className='w-90'>
-                    <div className='instaImage pt-28'>
-                        <img  src={instaLogo} />
-                        <p className="text-center" >Sign up to see photos and videos from your friends.</p>
-                    </div> 
-                    <div className='grid grid-cols-1 items-center'>
-                        <div className='flex flex-col gap-2'>
-                            <input type='text' className='block h-10 w-full mt-10 appearance-none rounded-lg bg-gray-50 px-3 sm:text-sm outline -outline-offset-1 outline-gray-950/15 focus:outline-gray-950 data-error:outline-rose-500' placeholder='Mobile Number or Email' />
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <input type='password' className='block h-10 w-full mt-5 appearance-none rounded-lg bg-gray-50 px-3 sm:text-sm outline -outline-offset-1 outline-gray-950/15 focus:outline-gray-950 data-error:outline-rose-500' placeholder='password' />
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <input type='text' className='block h-10 w-full mt-5 appearance-none rounded-lg bg-gray-50 px-3 sm:text-sm outline -outline-offset-1 outline-gray-950/15 focus:outline-gray-950 data-error:outline-rose-500' placeholder='Full Name' />
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <input type='text' className='block h-10 w-full mt-5 appearance-none rounded-lg bg-gray-50 px-3 sm:text-sm outline -outline-offset-1 outline-gray-950/15 focus:outline-gray-950 data-error:outline-rose-500' placeholder='Username' />
-                        </div>
-                        <button type='button' className='w-full justify-center text-white rounded-lg bg-blend-hard-light bg-blue-500 mt-8 p-2 cursor-pointer ' >Sign up</button>     
-                       
-                    </div>
-                </div>
-                </div>
-            </div>
+function SignUp() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    fullName: "",
+    username: ""
+  });
+
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch("https://instaclone-dj3x.onrender.com/api/user/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName,
+          username: formData.username
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Signup failed");
+      }
+
+      setSuccessMsg("Signup successful! Please login.");
+      setError("");
+      setFormData({ email: "", password: "", fullName: "", username: "" });
+    } catch (err) {
+      setError(err.message);
+      setSuccessMsg("");
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4">
+      <div className="flex flex-row w-full">
+        <div className="w-1/2">
+          <img className='m-20 size-9/12' src={InstaMainImg} alt="Instagram preview" />
         </div>
-        </>
-    )
+        <div className="w-1/2 pl-20">
+          <div className='w-90'>
+            <div className='instaImage pt-28'>
+              <img src={instaLogo} alt="Instagram Logo" />
+              <p className="text-center">Sign up to see photos and videos from your friends.</p>
+            </div>
+
+            <div className='grid grid-cols-1 items-center'>
+              <input
+                type='text'
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className='block h-10 w-full mt-10 rounded-lg bg-gray-50 px-3 sm:text-sm outline outline-gray-950/15 focus:outline-gray-950'
+                placeholder='Mobile Number or Email'
+              />
+
+              <input
+                type='password'
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className='block h-10 w-full mt-5 rounded-lg bg-gray-50 px-3 sm:text-sm outline outline-gray-950/15 focus:outline-gray-950'
+                placeholder='Password'
+              />
+
+              <input
+                type='text'
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                className='block h-10 w-full mt-5 rounded-lg bg-gray-50 px-3 sm:text-sm outline outline-gray-950/15 focus:outline-gray-950'
+                placeholder='Full Name'
+              />
+
+              <input
+                type='text'
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className='block h-10 w-full mt-5 rounded-lg bg-gray-50 px-3 sm:text-sm outline outline-gray-950/15 focus:outline-gray-950'
+                placeholder='Username'
+              />
+
+              <button
+                type='button'
+                className='w-full text-white rounded-lg bg-blue-500 mt-8 p-2 cursor-pointer'
+                onClick={handleSignUp}
+              >
+                Sign up
+              </button>
+
+              {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+              {successMsg && <p className="text-green-600 text-sm mt-3">{successMsg}</p>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default SignUp;
