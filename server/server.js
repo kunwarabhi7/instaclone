@@ -3,10 +3,9 @@ import { configDotenv } from "dotenv";
 import { connectToDB } from "./utils/connectToDB.js";
 import { userRouter } from "./routes/user.route.js";
 import { PostRouter } from "./routes/post.route.js";
-import {startCronJob} from './utils/cron.js'
-import cors from cors
+import { startCronJob } from "./utils/cron.js";
+import cors from "cors";
 configDotenv();
-
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,7 +15,7 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -30,8 +29,8 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Route is running" });
 });
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK' });
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
 });
 app.use("/api/user", userRouter);
 app.use("/api/post", PostRouter);
@@ -45,7 +44,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start cron job
-startCronJob()
+startCronJob();
 
 // Start Server
 const startServer = async () => {
