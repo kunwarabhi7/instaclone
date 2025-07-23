@@ -8,7 +8,7 @@ function SignUp() {
     email: "",
     password: "",
     fullName: "",
-    username: ""
+    userName: ""
   });
 
   const [error, setError] = useState("");
@@ -32,7 +32,7 @@ function SignUp() {
           email: formData.email,
           password: formData.password,
           fullName: formData.fullName,
-          username: formData.username
+          userName: formData.userName
         })
       });
 
@@ -44,7 +44,7 @@ function SignUp() {
 
       setSuccessMsg("Signup successful! Please login.");
       setError("");
-      setFormData({ email: "", password: "", fullName: "", username: "" });
+      setFormData({ email: "", password: "", fullName: "", userName: "" });
     } catch (err) {
       setError(err.message);
       setSuccessMsg("");
@@ -94,8 +94,8 @@ function SignUp() {
 
               <input
                 type='text'
-                name="username"
-                value={formData.username}
+                name="userName"
+                value={formData.userName}
                 onChange={handleChange}
                 className='block h-10 w-full mt-5 rounded-lg bg-gray-50 px-3 sm:text-sm outline outline-gray-950/15 focus:outline-gray-950'
                 placeholder='Username'
@@ -111,6 +111,9 @@ function SignUp() {
 
               {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
               {successMsg && <p className="text-green-600 text-sm mt-3">{successMsg}</p>}
+            </div>
+            <div className="mt-4 w-full text-center">
+              <p>Have an account? <Link to="/login" className="text-blue-500 font-medium">Log in</Link> </p>
             </div>
           </div>
         </div>
