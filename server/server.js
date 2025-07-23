@@ -4,12 +4,22 @@ import { connectToDB } from "./utils/connectToDB.js";
 import { userRouter } from "./routes/user.route.js";
 import { PostRouter } from "./routes/post.route.js";
 import {startCronJob} from './utils/cron.js'
-
+import cors from cors
 configDotenv();
 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+//cors
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 //middleware
 app.use(express.json());
