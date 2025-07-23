@@ -1,6 +1,8 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import InstaMainImg from './assets/images/instagram-web-lox-image.png';
 import instaLogo from './assets/images/insta.jpg';
-function LandingPage(){
+function LoginPage(){
     return (
         <> 
         <div className="container mx-auto px-4">
@@ -29,7 +31,7 @@ function LandingPage(){
                             <a className='text-black-200 cursor-pointer font-medium'>Forget Password?</a>
                         </div>
                         <div className='facebooklink text-center mt-5'>
-                           <p className='text-black-200'> Don't have an account? <a className='text-blue-700 cursor-pointer font-medium'>Sign up?</a></p>
+                           <p className='text-black-200'> Don't have an account? <a className='text-blue-700 cursor-pointer font-medium'><Link to="/signup">Sign up</Link></a> </p>
                         </div>
                     </div>
                 </div>
@@ -39,4 +41,4 @@ function LandingPage(){
         </>
     );
 }
-export default LandingPage;
+export default LoginPage;
